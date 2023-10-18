@@ -136,29 +136,62 @@ public:
 
     Var operator +(const Var& other)
     {
-        Var result;
-    	result.variable_ = variable_ + other.variable_;
-        return result;
+        if(typeid(other.variable_) != typeid(std::string) && typeid(other.variable_) != typeid(char))
+        {
+            Var result;
+            result.variable_ = variable_ + other.variable_;
+            return result;
+        }
+
+        if(typeid(other.variable_) == typeid(std::string) || typeid(other.variable_) == typeid(char))
+        {
+            Var result;
+            result.variable_ = variable_ + static_cast<int>(other.variable_);
+            return result;
+        }
     }
     Var operator +=(const Var& other)
     {
-        variable_ += other.variable_;
-        return *this;
+        if (typeid(other.variable_) != typeid(std::string) && typeid(other.variable_) != typeid(char))
+        {
+            variable_ += other.variable_;
+            return *this;
+        }
+        if(typeid(other.variable_) == typeid(std::string) || typeid(other.variable_) == typeid(char))
+        {
+            variable_ += static_cast<int>(other.variable_);
+            return *this;
+        }
     }
 
     Var operator -(const Var& other)
     {
-        if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char)) throw std::exception("Invalid argument");
-        Var result;
-        result.variable_ = variable_ - other.variable_;
+        if (typeid(other.variable_) != typeid(std::string) && typeid(other.variable_) != typeid(char))
+        {
+            Var result;
+            result.variable_ = variable_ - other.variable_;
+            return result;
+        }
 
-        return result;
+        if (typeid(other.variable_) == typeid(std::string) || typeid(other.variable_) == typeid(char))
+        {
+            Var result;
+            result.variable_ = variable_ - static_cast<int>(other.variable_);
+            return result;
+        }
     }
     Var operator -=(const Var& other)
     {
-        if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char)) throw std::exception("Invalid argument");
-        variable_ -= other.variable_;
-        return *this;
+        if (typeid(other.variable_) != typeid(std::string) && typeid(other.variable_) != typeid(char))
+        {
+            variable_ -= other.variable_;
+            return *this;
+        }
+        if (typeid(other.variable_) == typeid(std::string) || typeid(other.variable_) == typeid(char))
+        {
+            variable_ -= static_cast<int>(other.variable_);
+            return *this;
+        }
     }
 
     Var operator *(const Var& other)
