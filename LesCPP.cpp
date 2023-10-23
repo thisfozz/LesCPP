@@ -360,7 +360,55 @@ private:
     T variable_;
 };
 
+template<typename T>
+class Arr
+{
+private:
+    std::unique_ptr<T*> current_array_;
+    unsigned int size_;
+
+    static T generate_random_number() {
+        std::srand(static_cast<T>(std::time(nullptr)));
+        const T random_number = std::rand() % 6 + 5;
+        return random_number;
+    }
+
+public:
+    explicit Arr(const unsigned int& size) :size_(size)
+    {
+        current_array_ = new T[size_];
+        for (size_t i = 0; i < size; i++)
+        {
+            current_array_[i] = generate_random_number();
+        }
+    }
+    Arr() = default;
+
+    T find_min() const
+    {
+        if (size_ <= 0) return -1;
+        T min = current_array_[0];
+        for (size_t i = 1; i < size_; ++i) {
+            if (current_array_[i] < min) {
+                min = current_array_[i];
+            }
+        }
+        return min;
+    }
+
+    T find_max() const
+    {
+        if (size_ <= 0) return -1;
+        T max = current_array_[0];
+        for (size_t i = 1; i < size_; ++i) {
+            if (current_array_[i] > max) {
+                max = current_array_[i];
+            }
+        }
+        return max;
+    }
+};
+
 int main()
 {
-
 }
