@@ -873,6 +873,8 @@ bool isBalanced(std::string input) {
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 class PeopleINFO
 {
 public:
@@ -918,7 +920,6 @@ private:
     uint16_t age_;
 
 };
-
 class Passport
 {
 public:
@@ -1004,7 +1005,6 @@ protected:
     unsigned int number_pass_;
     std::string place_registration_;
 };
-
 class InternationalPassport : public Passport
 {
 public:
@@ -1033,6 +1033,135 @@ public:
 
 private:
     std::vector<std::string> VISA_;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class Foo
+{
+protected:
+    int value;
+};
+class Boo
+{
+protected:
+    int value;
+};
+class Koo : public  Foo, public Boo
+{
+public:
+    void printA()
+    {
+        //std::cout << value; // Ошибка. Неоднозначность. Какое value?
+    }
+};
+class Foo2 {
+protected:
+    int value;
+};
+class Boo2 : public Foo2
+{
+	
+};
+class Koo2 : public Foo2
+{
+	
+};
+class Loo : public  Boo2, public Koo2
+{
+public:
+    int getValue() const
+    {
+        //return value; Ошибка. Неоднозначность. Какое value?
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class Circle
+{
+public:
+    Circle(const unsigned int& diameter) : diameter_(diameter) {}
+
+    unsigned int get_diameter() const { return  diameter_; }
+private:
+    unsigned int diameter_;
+};
+class Square
+{
+public:
+	Square(const unsigned int& side) :side_(side) {}
+
+    unsigned int get_side() const { return  side_; }
+private:
+    unsigned int side_;
+};
+class CircleInSquare :public Circle, public  Square
+{
+public:
+    CircleInSquare(const unsigned int& diameter, const unsigned int& side) : Circle(diameter), Square(side) {}
+
+    std::string isCorrect()
+    {
+	    if(get_diameter() > get_side())
+	    {
+            isCorrect_ = "NO";
+            return isCorrect_;
+	    }
+        isCorrect_ = "YES";
+        return isCorrect_;
+    }
+private:
+    std::string isCorrect_;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class Engine
+{
+public:
+	Engine(const unsigned int& power): power_(power) {}
+
+    unsigned int get_power() const { return  power_; }
+
+private:
+    unsigned int power_;
+};
+class Clutch
+{
+public:
+    Clutch(const unsigned int& ratio) :ratio_(ratio) {}
+
+    unsigned int get_ratio() const { return  ratio_; }
+private:
+    unsigned int ratio_;
+};
+class Wheel
+{
+public:
+	Wheel(const unsigned int& pressure) :pressure_(pressure) {}
+
+    unsigned int get_pressure() const { return  pressure_;  }
+private:
+    unsigned int pressure_;
+};
+class Car : public Engine, public Clutch, public Wheel
+{
+public:
+	Car(const unsigned int& power, const unsigned int& ratio, const unsigned int& pressure, const std::string& mark) :Engine(power), Clutch(ratio), Wheel(pressure), mark_(mark) {}
+
+    std::string get_mark() const { return mark_; }
+
+    void get_info() const
+	{
+        std::cout
+            << "Car mark: " << get_mark() << std::endl
+            << "Engine power: " << get_power() << std::endl
+            << "Clutch: " << get_ratio() << std::endl
+            << "Wheel: " << get_pressure() << std::endl;
+	}
+private:
+    std::string mark_;
 };
 
 int main()
