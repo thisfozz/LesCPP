@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <stack>
+#include <vector>
 
 class Array {
 private:
@@ -613,7 +614,6 @@ private:
     }
 };
 
-
 template<typename T>
 class Vector
 {
@@ -789,9 +789,6 @@ private:
     int top_index_;
 };
 
-//Необходимо написать функцию, которая принимает входную строку, состоящую из скобок(, ), { , }, [, ], и проверяет, является ли данная строка сбалансированной.
-//Строка считается сбалансированной, если каждая открывающая скобка имеет соответствующую закрывающую скобку в правильном порядке.
-
 void check_balance(const std::string& str)
 {
     unsigned int size = str.size();
@@ -854,8 +851,191 @@ void check_balance(const std::string& str)
     }
 }
 
+bool isBalanced(std::string input) {
+	std:: stack<char> stk;
+
+    for (char c : input) {
+        if (c == '(' || c == '{' || c == '[') {
+            stk.push(c);
+        }
+        else if (c == ')' || c == '}' || c == ']') {
+            if (stk.empty()) {
+                return false;
+            }
+
+            char top = stk.top();
+            stk.pop();
+
+            if ((c == ')' && top != '(') || (c == '}' && top != '{') || (c == ']' && top != '[')) {
+                return false;
+            }
+        }
+    }
+}
+
+class PeopleINFO
+{
+public:
+    PeopleINFO(const  std::string& name, const  std::string& lastname, const std::string& patronymic, const uint16_t& age)
+        :name_(name), lastname_(lastname), patronymic_(patronymic), age_(age)
+	{}
+
+    void set_name(const  std::string& name)
+    {
+        name_ = name;
+    }
+    void set_lastname(const  std::string& lastname)
+    {
+        lastname_ = lastname;
+    }
+    void set_patronymic(const  std::string& patronymic)
+    {
+        patronymic_ = patronymic_;
+    }
+
+    std::string get_name() const
+    {
+        return name_;
+    }
+    std::string get_lastname() const
+    {
+        return lastname_;
+    }
+    std::string get_patronymic() const
+    {
+        return patronymic_;
+    }
+
+    uint16_t get_age() const
+    {
+        return age_;
+    }
+
+private:
+    std::string name_;
+    std::string lastname_;
+    std::string patronymic_;
+    uint16_t age_;
+
+};
+
+class Passport
+{
+public:
+    Passport(const std::string& name,
+        const  std::string& lastname,
+        const std::string& patronymic,
+        const uint16_t& age,
+        const std::string& place_registration = "")
+        :people_(name, lastname, patronymic, age), series_pass_(rand() % 9999 + 1000), number_pass_(rand() % 999999 + 100000), place_registration_(place_registration)
+	{}
+
+    void change_name(const  std::string& name)
+    {
+        people_.set_name(name);
+    }
+    void change_lastname(const  std::string& lastname)
+    {
+        people_.set_lastname(lastname);
+    }
+    void change_patronymic(const  std::string& patronymic)
+    {
+        people_.set_patronymic(patronymic);
+    }
+
+    void set_series_pass(const unsigned int series_pass)
+    {
+        series_pass_ = series_pass;
+    }
+    void set_number_pass(const unsigned int number_pass)
+    {
+        number_pass_ = number_pass;
+    }
+    void change_place_registration(const std::string& place_registration)
+    {
+        place_registration_ = place_registration_;
+    }
+
+    std::string get_name() const
+    {
+        return people_.get_name();
+    }
+    std::string get_lastname() const
+    {
+        return people_.get_lastname();
+    }
+    std::string get_patronymic() const
+    {
+        return people_.get_patronymic();
+    }
+    uint16_t get_age() const
+    {
+        return people_.get_age();
+    }
+
+    unsigned int get_series_pass() const
+    {
+        return series_pass_;
+    }
+    unsigned int get_number_pass() const
+    {
+        return number_pass_;
+    }
+    std::string get_place_registration() const
+    {
+        return place_registration_;
+    }
+
+    void print_info() const
+    {
+        std::cout
+            << "Name: " << get_name() << std::endl
+            << "Lastname: " << get_lastname() << std::endl
+            << "Patronymic" << get_patronymic() << std::endl
+            << "Age: " << get_age() << std::endl
+            << "Series Pass: " << get_series_pass() << std::endl
+            << "Number Pass: " << get_number_pass() << std::endl
+            << "Place Registration: " << get_place_registration() << std::endl;
+    }
+
+protected:
+    PeopleINFO people_;
+    unsigned int series_pass_;
+    unsigned int number_pass_;
+    std::string place_registration_;
+};
+
+class InternationalPassport : public Passport
+{
+public:
+    InternationalPassport(const std::string& name, const  std::string& lastname, const std::string& patronymic, const uint16_t& age):
+	    Passport(name, lastname, patronymic, age)
+    {}
+
+    void add_visa(std::string& VISA)
+    {
+        VISA_.emplace_back(VISA);
+    }
+
+    std::vector<std::string> get_visa() const
+    {
+        return VISA_;
+    }
+    void print_info() const
+    {
+        print_info();
+        std::cout << "VISA: ";
+        for (const auto& i : VISA_)
+        {
+            std::cout << i << ", ";
+        }
+    }
+
+private:
+    std::vector<std::string> VISA_;
+};
+
 int main()
 {
-    std::string input_str = "((([{([)}])])(){({){}})}{{{(}}{[]})}";
-    check_balance(input_str);
+
 }
