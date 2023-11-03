@@ -1386,17 +1386,5 @@ private:
 
 int main()
 {
-    std::vector<Pet*> pets = { new Dog("Sharik"), new Cat("Barsik") };
 
-    for (Pet* pet : pets)
-    {
-        pet->Sound();
-        pet->Show();
-        pet->Type();
-    }
-
-    for(Pet* pet : pets)
-    {
-        delete pet;
-    }
 }
