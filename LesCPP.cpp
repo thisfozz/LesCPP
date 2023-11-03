@@ -1,6 +1,10 @@
 ﻿#include <iostream>
 #include <stack>
 #include <vector>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <bitset>
 
 class Array {
 private:
@@ -1164,7 +1168,235 @@ private:
     std::string mark_;
 };
 
+class AcademicGroup
+{
+public:
+	AcademicGroup(const std::string& name): name_academic_(name) {}
+
+    std::string get_name_academic() const
+	{
+        return name_academic_;
+	}
+
+private:
+    std::string name_academic_;
+};
+class Specialization
+{
+public:
+    Specialization(const std::string& name) : name_specialization_(name) {}
+
+    std::string get_name_secialization() const
+    {
+        return name_specialization_;
+    }
+private:
+    std::string name_specialization_;
+};
+class  Discipline
+{
+public:
+    Discipline(const std::string& name) : name_descipline_(name) {}
+
+    std::string get_name_descipline() const
+    {
+        return name_descipline_;
+    }
+private:
+    std::string name_descipline_;
+};
+class Auditorium
+{
+public:
+    Auditorium(const unsigned int number) : number_auditorium_(number) {}
+
+    unsigned int get_number_auditorium_() const
+    {
+        return number_auditorium_;
+    }
+private:
+    unsigned int number_auditorium_;
+};
+class Lecturer
+{
+public:
+    Lecturer(const std::string& name) : name_lecturer_(name) {}
+
+    std::string get_name_lecturer() const
+    {
+        return name_lecturer_;
+    }
+private:
+    std::string name_lecturer_;
+};
+class Organizer : public AcademicGroup, public Specialization, public Discipline, public Auditorium, public  Lecturer
+{
+public:
+    void print_info() const
+    {
+        std::cout
+            << "Academic group: " << get_name_academic() << std::endl
+            << "Specialization: " << get_name_secialization() << std::endl
+            << "Discipline: " << get_name_descipline() << std::endl
+            << "Auditorium: " << get_number_auditorium_() << std::endl
+            << "Name Lecturer: " << get_name_lecturer() << std::endl;
+    }
+};
+
+class Pet
+{
+public:
+	virtual ~Pet() = default;
+
+	Pet(const std::string pet_name) : pet_name_(pet_name) {}
+
+    virtual void Sound() const = 0;
+    virtual void Show() const = 0;
+    virtual void Type() const = 0;
+
+protected:
+    std::string pet_name_;
+};
+class Dog : public Pet {
+public:
+    Dog(const std::string dog_name) : Pet(dog_name), dog_name_(dog_name) {}
+
+    virtual void Sound() const override {
+        std::cout << "Gav Gav Gav" << std::endl;
+    }
+    virtual void Show() const override {
+        std::cout << "My name is " << dog_name_ << std::endl;
+    }
+    virtual void Type() const override {
+        std::cout << "I'm a dog" << std::endl;
+    }
+
+private:
+    std::string dog_name_;
+};
+class Cat : public Pet {
+public:
+    Cat(const std::string cat_name) : Pet(cat_name), cat_name_(cat_name) {}
+
+    virtual void Sound() const override {
+        std::cout << "Mew mew mew" << std::endl;
+    }
+    virtual void Show() const override {
+        std::cout << "My name is " << cat_name_ << std::endl;
+    }
+    virtual void Type() const override {
+        std::cout << "I'm a cat" << std::endl;
+    }
+
+private:
+    std::string cat_name_;
+};
+
+class LOGText
+{
+public:
+    LOGText(const std::string path) :path_(path) {}
+
+    void setPath(const std::string& path)
+	{
+        path_ = path;
+	}
+    std::string getPath() const
+    {
+        return path_;
+    }
+
+    virtual void set_content(std::string content) = 0;
+
+    virtual void display() const = 0;
+protected:
+    std::string path_;
+};
+class LOGASKIIConcole : LOGText
+{
+public:
+    LOGASKIIConcole(const std::string path, const std::string& text) : LOGText(path) , text_(text) {}
+
+    virtual  void display() const override
+    {
+        if (content_.empty()) return;
+        for (const char i : content_)
+        {
+            std::cout << static_cast<int>(i);
+        }
+    }
+    virtual void set_content(std::string content) override
+    {
+        content_ = content;
+    }
+private:
+    std::string text_;
+    std::string content_;
+
+    std::string readFile()
+    {
+        std::string line;
+
+        std::ifstream file(getPath());
+        if (file.is_open())
+        {
+            while (std::getline(file, line))
+            {
+                content_ += line;
+            }
+        }
+    }
+};
+class LOGbinaryConcole : LOGText
+{
+public:
+    LOGbinaryConcole(const std::string path, const std::string& text) : LOGText(path), text_(text) {}
+
+    virtual  void display() const override
+    {
+        if (content_.empty()) return;
+        for (char i : content_)
+        {
+            std::cout << std::bitset<8>(i) << ' ';
+        }
+    }
+    virtual void set_content(std::string content) override
+    {
+        content_ = content;
+    }
+
+private:
+    std::string text_;
+    std::string content_;
+
+    std::string readFile()
+    {
+        std::string line;
+
+        std::ifstream file(getPath());
+        if (file.is_open())
+        {
+            while (std::getline(file, line))
+            {
+                content_ += line;
+            }
+        }
+    }
+};
+
 int main()
 {
+    std::vector<Pet*> pets = { new Dog("Sharik"), new Cat("Barsik") };
 
+    for (Pet* pet : pets)
+    {
+        pet->Sound();
+        pet->Show();
+        pet->Type();
+    }
+
+    for(Pet* pet : pets)
+    {
+        delete pet;
+    }
 }
