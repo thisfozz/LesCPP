@@ -5,6 +5,9 @@
 #include <fstream>
 #include <string>
 #include <bitset>
+#include <cmath>
+#include <map>
+#include <variant>
 
 class Array {
 private:
@@ -133,6 +136,80 @@ public:
         delete[] current_array_;
     }
 };
+
+
+template<typename T>
+class Queue_
+{
+public:
+    Queue_() :size_(0)
+    {
+        current_array_ = new T[size_];
+        for (int i = 0; i <= size_; i++)
+        {
+            current_array_[i] = 0;
+        }
+    }
+    void push(T value)
+    {
+        size_++;
+        T* tmp = new T[size_];
+
+        for (int i = 0; i < size_ - 1; i++)
+            tmp[i] = current_array_[i];
+
+        tmp[size_ - 1] = value;
+
+        for(size_t i = 0; i< size_; ++i)
+        {
+            current_array_[i] = tmp[i];
+        }
+
+        delete[] tmp;
+    }
+    T pop()
+    {
+        T res = current_array_[0];
+
+        size_;
+        T* tmp = new T[size_];
+
+        for (int i = 0; i < size_ - 1; i++)
+            tmp[i] = current_array_[i];
+
+        for (size_t i = 0; i < size_ + 1; ++i)
+        {
+            current_array_[i] = tmp[i];
+        }
+
+        size_--;
+
+        return res;
+    }
+
+    void print() const
+    {
+	    for(size_t i = 0; i< size_; ++i)
+	    {
+            std::cout << current_array_[i] << " ";
+	    }
+    }
+private:
+    T* current_array_;
+    unsigned int size_;
+};
+
+
+
+int main()
+{
+    Queue_<int> que;
+    que.push(5);
+    que.push(2);
+    que.print();
+    std::cout << "\n" <<  que.pop();
+    que.print();
+}
 
 template<typename T>
 class Var
@@ -370,7 +447,7 @@ template<typename T>
 class Arr
 {
 private:
-    std::auto_ptr <T*> current_array_;
+    T* current_array_;
     unsigned int size_;
 
     static T generate_random_number() {
@@ -383,35 +460,66 @@ public:
     explicit Arr(const unsigned int& size) :size_(size)
     {
         current_array_ = new T[size_];
-        for (size_t i = 0; i < size; i++)
+        for (size_t i = 0; i < size; ++i)
         {
             current_array_[i] = generate_random_number();
         }
     }
     Arr() = default;
 
-    T find_min() const
+    T get_value(const unsigned int& index) const
     {
-        if (size_ <= 0) return -1;
-        T min = current_array_[0];
-        for (size_t i = 1; i < size_; ++i) {
-            if (current_array_[i] < min) {
-                min = current_array_[i];
-            }
-        }
-        return min;
+	    if(index > size_)
+	    {
+            return throw std::out_of_range("Bad index");
+	    }
+        return *current_array_[index];
     }
 
-    T find_max() const
+    unsigned int get_size() const { return  size_; }
+
+    void push_value(const unsigned int& index,const T& value)
     {
-        if (size_ <= 0) return -1;
-        T max = current_array_[0];
-        for (size_t i = 1; i < size_; ++i) {
-            if (current_array_[i] > max) {
-                max = current_array_[i];
+	    if(index > size_)
+	    {
+            return throw std::out_of_range("Bad index");
+	    }
+
+        // Надо организовать какую-то проверку указателя массива T и типа value
+
+        T* tmp_array_ = new T[size_ + 1];
+
+        for(size_t i = 0; i< size_; ++i)
+        {
+            if(i == index)
+            {
+                /*
+					* class Foo{
+					* public:
+					*   Foo(const int value) : value(value) {}
+					* };
+					* ***** Конструктора по умолчанию нет!
+					* ***** Если использоловать простое присваиваение *tmp_array_[i] = value;* ,то выпадет исключение т.к будет попытка вызова конструктора по умолчанию, которого нет
+					* ***** Код - *new (&tmp_array_[i]) T(value);*  Вызовет конструктор копирования(будь то неявный(дефолтный), || явный(описанный));
+				*/
+                new (&tmp_array_[i]) T(value);
+                //tmp_array_[i] = value;
+                continue;
             }
+            tmp_array_[i] = current_array_[i];
         }
-        return max;
+
+        delete[] current_array_;
+        current_array_ = tmp_array_;
+        ++size_;
+    }
+
+    void print_array() const
+    {
+	    for(auto element : current_array_)
+	    {
+            std::cout << element << " ";
+	    }
     }
 };
 
@@ -1041,47 +1149,6 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class Foo
-{
-protected:
-    int value;
-};
-class Boo
-{
-protected:
-    int value;
-};
-class Koo : public  Foo, public Boo
-{
-public:
-    void printA()
-    {
-        //std::cout << value; // Ошибка. Неоднозначность. Какое value?
-    }
-};
-class Foo2 {
-protected:
-    int value;
-};
-class Boo2 : public Foo2
-{
-	
-};
-class Koo2 : public Foo2
-{
-	
-};
-class Loo : public  Boo2, public Koo2
-{
-public:
-    int getValue() const
-    {
-        //return value; Ошибка. Неоднозначность. Какое value?
-    }
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 class Circle
 {
 public:
@@ -1168,6 +1235,8 @@ private:
     std::string mark_;
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 class AcademicGroup
 {
 public:
@@ -1243,6 +1312,8 @@ public:
     }
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 class Pet
 {
 public:
@@ -1291,6 +1362,8 @@ public:
 private:
     std::string cat_name_;
 };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class LOGText
 {
@@ -1384,7 +1457,392 @@ private:
     }
 };
 
-int main()
-{
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-}
+class Employer
+{
+public:
+    virtual void print() const = 0;
+
+    virtual ~Employer() = default;
+};
+class President : public Employer
+{
+public:
+	President(const std::string& rang, const unsigned int& salary) :rang_(rang), salary_(salary) {}
+    virtual  void print() const override
+    {
+        std::cout << "I;m " << rang_ << " My salary: " << salary_ << std::endl;
+    }
+private:
+    unsigned int salary_;
+    std::string rang_;
+};
+class Manager : public Employer
+{
+public:
+	Manager(const std::string& rang, const unsigned int& salary) :rang_(rang), salary_(salary) {}
+
+    virtual  void print() const override
+	{
+        std::cout << "I;m " << rang_ << " My salary: " << salary_ << std::endl;
+	}
+private:
+    unsigned int salary_;
+    std::string rang_;
+};
+class Worker : public Employer
+{
+public:
+    Worker(const std::string& rang, const unsigned int& salary) :rang_(rang), salary_(salary) {}
+
+    virtual  void print() const override
+    {
+        std::cout << "I;m " << rang_ << " My salary: " << salary_ << std::endl;
+    }
+private:
+    unsigned int salary_;
+    std::string rang_;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class Shape
+{
+public:
+    virtual double_t getSqare() = 0;
+};
+class Triangle : public Shape
+{
+public:
+	Triangle(const double_t& height, const double_t& footing) :height_(height), footing_(footing) {}
+
+    virtual double_t getSqare() override
+	{
+        sqare_ = 0.5 * (footing_ * height_);
+
+        return sqare_;
+	}
+private:
+    double_t height_;
+    double_t footing_;
+    double_t sqare_;
+};
+class Circle_ : public  Shape
+{
+public:
+    Circle_(const double_t& radius) :radius_(radius) {}
+
+    virtual double_t getSqare() override
+    {
+        sqare_ = std::pow(radius_, 2) * 3.14;
+        return  sqare_;
+    }
+private:
+    double_t radius_;
+    double_t sqare_;
+};
+class Trapezoid : public Shape
+{
+public:
+    Trapezoid(const double_t& height, const double_t& footing_UP, const double_t& footing_DOWN) :height_(height), footing_UP_(footing_UP), footing_DOWN_(footing_DOWN) {}
+
+    virtual double_t getSqare() override
+    {
+        sqare_ = ((footing_UP_ + footing_DOWN_) / 2) * height_;
+
+        return  sqare_;
+    }
+private:
+    double_t height_;
+    double_t footing_DOWN_;
+    double_t footing_UP_;
+    double_t sqare_;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class Equalization
+{
+public:
+    virtual void print_result() = 0;
+};
+class LinearEqualization : public  Equalization
+{
+public:
+    LinearEqualization(const double_t& value_a, const double_t& value_b) : value_a_(value_a), value_b_(value_b) {}
+
+    virtual void print_result() override
+    {
+        std::cout << "Result Linear Equalization = " << decide() << std::endl;
+    }
+
+private:
+    double_t value_a_;
+    double_t value_b_;
+
+    double_t decide()
+    {
+        return -(value_b_) / value_a_;
+    }
+};
+class SquareEqualization : public Equalization
+{
+public:
+    SquareEqualization(const double_t& value_a, const double_t& value_b, const double_t value_c) : value_a_(value_a), value_b_(value_b), value_c_(value_c) {}
+
+    virtual void print_result() override
+    {
+        std::variant <double_t, std::pair<double_t, double_t>> results = decide();
+
+        if (results.index() == 0)
+        {
+            double_t root = std::get<double_t>(results);
+            if (root > 0)
+            {
+                std::cout << "Result Square Equalization = " << root;
+            }
+            else
+            {
+                std::cout << "Not roots";
+            }
+        }
+        else if (results.index() == 1)
+        {
+            std::pair<double_t, double_t> roots = std::get<std::pair<double_t, double_t>>(results);
+            std::cout << "Root 1 = " << roots.first << " " << "Root 2 = " << roots.second << std::endl;
+        }
+    }
+private:
+    double_t value_a_;
+    double_t value_b_;
+    double_t value_c_;
+
+    std::variant<double_t, std::pair<double_t, double_t>> decide()
+    {
+        double_t D = std::pow(value_b_, 2) - 4 * value_a_ * value_c_;
+
+        if (D < 0)
+        {
+            //return nullptr;
+        }
+        if (D == 0)
+        {
+            double_t root = -value_b_ / (2 * value_a_);
+            return root;
+        }
+        if (D > 0)
+        {
+            double_t root_one = (-value_b_ + std::sqrt(D)) / (2 * value_a_);
+            double_t root_two = (-value_b_ - std::sqrt(D)) / (2 * value_a_);
+            std::pair<double_t, double_t> square = { root_one, root_two };
+
+            return square;
+        }
+    }
+};
+
+
+class Shape_
+{
+public:
+    virtual void Show() const = 0;
+    virtual void Save() const = 0;
+    virtual void Load() const = 0;
+
+    virtual ~Shape_() = default;
+};
+class Square_ : public Shape_
+{
+public:
+	Square_(const double_t& side) :side_(side) {}
+
+    virtual void Show() const override
+    {
+        std::cout << "sq: " << side_ << ", " << side_ << std::endl;
+    }
+    virtual void Save() const override
+    {
+        std::ofstream out;
+        out.open("file.txt");
+        if(out.is_open())
+        {
+            out  << "sq: " << side_ << ", " << side_ << std::endl;
+        }
+        out.flush();
+        out.close();
+    }
+    virtual void Load() const override
+    {
+        std::string line;
+        std::ifstream in;
+        in.open("file.txt");
+        if(in.is_open())
+        {
+            while (std::getline(in, line))
+            {
+                if(line.find("sq: ") != std::string::npos)
+					std::cout << line << std::endl;
+            }
+        }
+        in.close();
+    }
+private:
+    double_t side_;
+    std::vector<double_t> coordinates_;
+
+    std::vector<double_t> CalclCords()
+    {
+	    
+    }
+};
+class _Circle_ : public Shape_
+{
+public:
+	_Circle_(const std::double_t radius) : radius_(radius) {}
+
+    virtual void Show() const override
+    {
+		std::cout << "cir: " << radius_ << ", " << "Center: " << radius_ / 2.0 << std::endl;
+    }
+    virtual void Save() const override
+    {
+        std::ofstream out;
+        out.open("file.txt");
+        if (out.is_open())
+        {
+            out << "cir: " << radius_ << ", " << "Center: " << radius_ / 2.0 << std::endl;
+        }
+        out.flush();
+        out.close();
+    }
+    virtual void Load() const override
+    {
+        std::string line;
+        std::ifstream in;
+        in.open("file.txt");
+        if (in.is_open())
+        {
+            while (std::getline(in, line))
+            {
+                if (line.find("cir: ") != std::string::npos)
+                    std::cout << line << std::endl;
+            }
+        }
+        in.close();
+    }
+private:
+	double_t radius_;
+};
+class Ellipse : public Shape_
+{
+public:
+	Ellipse(const double_t radius_a, const double_t radius_b) : radius_a_(radius_a), radius_b_(radius_b) {}
+
+    virtual void Show() const override
+    {
+        std::cout << "eli: " << "RaA: " << radius_a_ << ", " << "RaB: " << radius_b_ << " Center" << radius_a_/2.0 << std::endl;
+    }
+    virtual void Save() const override
+    {
+        std::ofstream out;
+        out.open("file.txt");
+        if (out.is_open())
+        {
+            out << "eli: " << "RaA: " << radius_a_ << ", " << "RaB: " << radius_b_ << " Center" << radius_a_ / 2.0 << std::endl;
+        }
+        out.flush();
+        out.close();
+    }
+    virtual void Load() const override
+    {
+        std::string line;
+        std::ifstream in;
+        in.open("file.txt");
+        if (in.is_open())
+        {
+            while (std::getline(in, line))
+            {
+                if (line.find("eli: ") != std::string::npos)
+                    std::cout << line << std::endl;
+            }
+        }
+        in.close();
+    }
+private:
+    double_t radius_a_;
+    double_t radius_b_;
+};
+
+class Studet
+{
+public:
+    Studet(){}
+	Studet(const std::string& name, const std::string& lastname, const std::string& name_group) : name_(name), lastname_(lastname), name_group_(name_group) {}
+
+    std::string get_name() const { return  name_; }
+    std::string get_lastname() const { return  lastname_; }
+    std::string get_name_group() const { return  name_group_; }
+
+    bool put_estimation(std::string object, uint16_t value)
+	{
+        if (estimations_.find(object) != estimations_.end())
+        {
+            std::vector<uint16_t> estimation = estimations_.operator[](object);
+            estimation.emplace_back(value);
+            estimations_.operator[](object) = estimation;
+        }else
+        {
+            std::map<std::string, std::vector<uint16_t>> my_map;
+            std::vector<uint16_t> estimation; estimation.emplace_back(value);
+
+            std::pair<std::string, std::vector<uint16_t>> element_to_insert(object, estimation);
+            my_map.insert(element_to_insert);
+            estimations_ = my_map;
+        }
+        return true;
+	}
+
+    std::map<std::string, std::vector<uint16_t>> get_estimations() const { return  estimations_; }
+
+protected:
+    std::string name_;
+    std::string lastname_;
+    std::string name_group_;
+    std::map<std::string, std::vector<uint16_t>> estimations_;
+};
+class Group
+{
+public:
+	Group(const std::string& name_group) : name_group_(name_group) {}
+
+    void add_student(Studet studet)
+	{
+        group_.emplace_back(studet);
+	}
+
+    void print() const
+	{
+        for(size_t i = 0; i < group_.size(); ++i)
+        {
+            std::cout << "Name: " << group_[i].get_name() << std::endl;
+            std::cout << "Lastname: " << group_[i].get_lastname() << std::endl;
+            std::cout << "Group: " << student.get_name_group() << std::endl;
+
+            std::map<std::string, std::vector<uint16_t>> estimations_ = group_[i].get_estimations();
+
+            for (auto it : estimations_)
+            {
+                std::cout << it.first << "\tEstimations: ";
+                for (auto es : it.second)
+                {
+                    std::cout  << es << " ";
+                }
+            }
+        }
+	}
+private:
+    Studet student;
+    std::string name_group_;
+    std::vector<Studet> group_;
+};
