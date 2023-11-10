@@ -1,7 +1,6 @@
 ﻿#include <iostream>
 #include <stack>
 #include <vector>
-#include <iostream>
 #include <fstream>
 #include <string>
 #include <bitset>
@@ -97,7 +96,7 @@ public:
         return min;
     }
 
-    int& operator[](const unsigned int index) const
+    int& operator[](const size_t index) const
     {
         if (index > size_)
             throw std::exception("Index of Range");
@@ -196,238 +195,6 @@ public:
 private:
     T* current_array_;
     unsigned int size_;
-};
-
-template<typename T>
-class Var
-{
-public:
-    Var(const T variable) : variable_(variable) {}
-
-    Var operator +(const Var& other)
-    {
-        if(typeid(other.variable_) != typeid(std::string) && typeid(other.variable_) != typeid(char))
-        {
-            Var result;
-            result.variable_ = variable_ + other.variable_;
-            return result;
-        }
-
-        if(typeid(other.variable_) == typeid(std::string) || typeid(other.variable_) == typeid(char))
-        {
-            Var result;
-            result.variable_ = variable_ + static_cast<int>(other.variable_);
-            return result;
-        }
-    }
-    Var operator +=(const Var& other)
-    {
-        if (typeid(other.variable_) != typeid(std::string) && typeid(other.variable_) != typeid(char))
-        {
-            variable_ += other.variable_;
-            return *this;
-        }
-        if(typeid(other.variable_) == typeid(std::string) || typeid(other.variable_) == typeid(char))
-        {
-            variable_ += static_cast<int>(other.variable_);
-            return *this;
-        }
-    }
-
-    Var operator -(const Var& other)
-    {
-        if (typeid(other.variable_) != typeid(std::string) && typeid(other.variable_) != typeid(char))
-        {
-            Var result;
-            result.variable_ = variable_ - other.variable_;
-            return result;
-        }
-
-        if (typeid(other.variable_) == typeid(std::string) || typeid(other.variable_) == typeid(char))
-        {
-            Var result;
-            result.variable_ = variable_ - static_cast<int>(other.variable_);
-            return result;
-        }
-    }
-    Var operator -=(const Var& other)
-    {
-        if (typeid(other.variable_) != typeid(std::string) && typeid(other.variable_) != typeid(char))
-        {
-            variable_ -= other.variable_;
-            return *this;
-        }
-        if (typeid(other.variable_) == typeid(std::string) || typeid(other.variable_) == typeid(char))
-        {
-            variable_ -= static_cast<int>(other.variable_);
-            return *this;
-        }
-    }
-
-    Var operator *(const Var& other)
-    {
-        if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
-        {
-            Var result;
-            const std::string& str1 = variable_;
-            const std::string& str2 = other.variable_;
-
-            for (char c : str1) {
-                if (str2.find(c) != std::string::npos) {
-                    result += c;
-                }
-            }
-
-            return result;
-        }
-        Var result;
-        result.variable_ = variable_ * other.variable_;
-
-        return result;
-    }
-    Var operator *=(const Var& other)
-    {
-        if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
-        {
-            Var result;
-            const std::string& str1 = variable_;
-            const std::string& str2 = other.variable_;
-
-            for (char c : str1) {
-                if (str2.find(c) != std::string::npos) {
-                    result += c;
-                }
-            }
-
-            return result;
-        }
-        variable_ *= other.variable_;
-        return *this;
-    }
-
-    Var operator /(const Var& other)
-    {
-        if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
-        {
-            Var result;
-            const std::string& str1 = variable_;
-            const std::string& str2 = other.variable_;
-
-            for (char c : str1) {
-                if (str2.find(c) == std::string::npos) {
-                    result += c;
-                }
-            }
-
-            return result;
-        }
-
-        if(other.variable_ != 0)
-        {
-            Var result;
-            result.variable_ = variable_ / other.variable_;
-            return result;
-        }else
-        {
-            throw std::exception("Divide by zero");
-        }
-    }
-    Var operator /=(const Var& other)
-    {
-        if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
-        {
-            Var result;
-            const std::string& str1 = variable_;
-            const std::string& str2 = other.variable_;
-
-            for (char c : str1) {
-                if (str2.find(c) == std::string::npos) {
-                    result += c;
-                }
-            }
-
-            return result;
-        }
-
-        if (other.variable_ != 0)
-        {
-            variable_ /= other.variable_;
-            return *this;
-        }
-        else throw std::exception("Divide by zero");
-    }
-
-    bool operator <(const Var& other)
-    {
-	    if(typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
-	    {
-            return variable_.length() < other.variable_.length();
-	    }else
-	    {
-            return variable_ < other.variable_;
-	    }
-    }
-    bool operator <=(const Var& other)
-    {
-        if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
-        {
-            return variable_.length() <= other.variable_.length();
-        }
-        else
-        {
-            return variable_ <= other.variable_;
-        }
-    }
-
-    bool operator >(const Var& other)
-    {
-        if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
-        {
-            return variable_.length() > other.variable_.length();
-        }
-        else
-        {
-            return variable_ > other.variable_;
-        }
-    }
-    bool operator >=(const Var& other)
-    {
-        if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
-        {
-            return variable_.length() >= other.variable_.length();
-        }
-        else
-        {
-            return variable_ >= other.variable_;
-        }
-    }
-
-    bool operator ==(const Var& other)
-    {
-        if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
-        {
-            return variable_.length() == other.variable_.length();
-        }
-        else
-        {
-            return variable_ == other.variable_;
-        }
-    }
-
-    bool operator !=(const Var& other)
-    {
-        if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
-        {
-            return variable_.length() != other.variable_.length();
-        }
-        else
-        {
-            return variable_ != other.variable_;
-        }
-    }
-
-private:
-    T variable_;
 };
 
 template<typename T>
@@ -739,79 +506,110 @@ private:
 
 };
 
-class Stack_
+namespace Stack
 {
-public:
-	explicit Stack_(const int& size) : max_size_(size), top_index_(-1) {
-        stack_array_ = new char[max_size_];
-    }
-
-    bool is_full() const {
-        return top_index_ == max_size_ - 1;
-    }
-    bool is_empty() const {
-        return top_index_ == -1;
-    }
-
-    int get_size() const
-	{
-        return top_index_ +1;
-	}
-
-    void push(const char c) {
-        if (is_full()) {
-            throw std::overflow_error("Stack is full");
+    class Stack
+    {
+    public:
+        explicit Stack(const int& size) : max_size_(size), top_index_(-1) {
+            stack_array_ = new char[max_size_];
         }
-        stack_array_[++top_index_] = c;
-    }
-    char pop()
-	{
-		if(is_empty())
-		{
-            throw std::overflow_error("Stack is empty");
-		}
-        return stack_array_[top_index_--];
-	}
-    void pop_c()
-	{
-        if (is_empty())
+
+        bool is_full() const {
+            return top_index_ == max_size_ - 1;
+        }
+        bool is_empty() const {
+            return top_index_ == -1;
+        }
+
+        int get_size() const
         {
-            throw std::overflow_error("Stack is empty");
+            return top_index_ + 1;
         }
-        stack_array_[top_index_--];
-	}
 
-    char pop_non_pop() const
-    {
-		if(is_empty())
-		{
-            throw std::overflow_error("Stack is empty");
-		}
-        return stack_array_[top_index_];
-	}
+        void push(const char c) {
+            try
+            {
+                if (is_full()) {
+                    throw std::overflow_error("Stack is full");
+                }
+            }
+            catch (const std::overflow_error& ex)
+            {
+                std::cerr << "Error: " << ex.what() << std::endl;
+            }
+            stack_array_[++top_index_] = c;
+        }
+        char pop()
+        {
+            try
+            {
+                if (is_empty())
+                {
+                    throw std::underflow_error("Stack is empty");
+                }
+            }
+            catch (const std::overflow_error& ex)
+            {
+                std::cerr << "Error: " << ex.what() << std::endl;
+            }
+            return stack_array_[top_index_--];
+        }
+        void pop_c()
+        {
+            try
+            {
+                if (is_empty())
+                {
+                    throw std::underflow_error("Stack is empty");
+                }
+            }
+            catch (const std::overflow_error& ex)
+            {
+                std::cerr << "Error: " << ex.what() << std::endl;
+            }
+            stack_array_[top_index_--];
+        }
 
-    void clear()
-	{
-		while (!is_empty())
-		{
-            pop_c();
-		}
-	}
+        char pop_non_pop() const
+        {
+            try
+            {
+                if (is_empty())
+                {
+                    throw std::underflow_error("Stack is empty");
+                }
+            }
+            catch (const std::overflow_error& ex)
+            {
+                std::cerr << "Error: " << ex.what() << std::endl;
+            }
+            return stack_array_[top_index_];
+        }
 
-    ~Stack_()
-    {
-        delete[] stack_array_;
-    }
-private:
-    char* stack_array_;
-    int max_size_;
-    int top_index_;
-};
+        void clear()
+        {
+            while (!is_empty())
+            {
+                pop_c();
+            }
+        }
+
+        ~Stack()
+        {
+            delete[] stack_array_;
+        }
+    private:
+        char* stack_array_;
+        int max_size_;
+        int top_index_;
+    };
+}
 
 void check_balance(const std::string& str)
 {
-    unsigned int size = str.size();
-    Stack_ stack(size);
+	const size_t size = str.size();
+    Stack::Stack stack(static_cast<size_t>(size));
     std::stack<char> bracketStack;
     int parenthesis_bracket = 0;
     int square_bracket = 0;
@@ -1275,13 +1073,13 @@ private:
 class LOGText
 {
 public:
-    LOGText(const std::string path) :path_(path) {}
+	explicit LOGText(const std::string& path) :path_(path) {}
 
-    void setPath(const std::string& path)
+    void set_path(const std::string& path)
 	{
         path_ = path;
 	}
-    std::string getPath() const
+    std::string get_path() const
     {
         return path_;
     }
@@ -1295,7 +1093,7 @@ protected:
 class LOGASKIIConcole : LOGText
 {
 public:
-    LOGASKIIConcole(const std::string path, const std::string& text) : LOGText(path) , text_(text) {}
+    LOGASKIIConcole(const std::string& path, std::string text) : LOGText(path) , text_(std::move(text)) {}
 
     virtual  void display() const override
     {
@@ -1317,7 +1115,7 @@ private:
     {
         std::string line;
 
-        std::ifstream file(getPath());
+        std::ifstream file(get_path());
         if (file.is_open())
         {
             while (std::getline(file, line))
@@ -1353,7 +1151,7 @@ private:
     {
         std::string line;
 
-        std::ifstream file(getPath());
+        std::ifstream file(get_path());
         if (file.is_open())
         {
             while (std::getline(file, line))
@@ -1422,7 +1220,7 @@ public:
 class Triangle : public Shape
 {
 public:
-	Triangle(const double_t& height, const double_t& footing) :height_(height), footing_(footing) {}
+	Triangle(const double_t& height, const double_t& footing) :height_(height), footing_(footing), sqare_(0) {}
 
     virtual double_t getSqare() override
 	{
@@ -1438,7 +1236,7 @@ private:
 class Circle_ : public  Shape
 {
 public:
-    Circle_(const double_t& radius) :radius_(radius) {}
+	explicit Circle_(const double_t& radius) :radius_(radius), sqare_(0) {}
 
     virtual double_t getSqare() override
     {
@@ -1452,7 +1250,7 @@ private:
 class Trapezoid : public Shape
 {
 public:
-    Trapezoid(const double_t& height, const double_t& footing_UP, const double_t& footing_DOWN) :height_(height), footing_UP_(footing_UP), footing_DOWN_(footing_DOWN) {}
+    Trapezoid(const double_t& height, const double_t& footing_up, const double_t& footing_down) :height_(height), footing_DOWN_(footing_down), footing_UP_(footing_up), sqare_(0) {}
 
     virtual double_t getSqare() override
     {
@@ -1500,12 +1298,11 @@ public:
 
     virtual void print_result() override
     {
-        std::variant <double_t, std::pair<double_t, double_t>> results = decide();
+	    const std::variant <double_t, std::pair<double_t, double_t>> results = decide();
 
         if (results.index() == 0)
         {
-            double_t root = std::get<double_t>(results);
-            if (root > 0)
+	        if (const double_t root = std::get<double_t>(results); root > 0)
             {
                 std::cout << "Result Square Equalization = " << root;
             }
@@ -1687,8 +1484,12 @@ private:
 class Studet
 {
 public:
-    Studet(){}
-	Studet(const std::string& name, const std::string& lastname, const std::string& name_group) : name_(name), lastname_(lastname), name_group_(name_group) {}
+    Studet() = default;
+
+    Studet(std::string name, std::string lastname, std::string name_group) :
+	name_(std::move(name)),
+	lastname_(std::move(lastname)),
+	name_group_(std::move(name_group)) {}
 
     std::string get_name() const { return  name_; }
     std::string get_lastname() const { return  lastname_; }
@@ -1696,7 +1497,7 @@ public:
 
     bool put_estimation(std::string object, uint16_t value)
 	{
-        if (estimations_.find(object) != estimations_.end())
+        if (estimations_.contains(object))
         {
             std::vector<uint16_t> estimation = estimations_.operator[](object);
             estimation.emplace_back(value);
@@ -1734,18 +1535,18 @@ public:
 
     void print() const
 	{
-        for(size_t i = 0; i < group_.size(); ++i)
+        for (const auto& i : group_)
         {
-            std::cout << "Name: " << group_[i].get_name() << std::endl;
-            std::cout << "Lastname: " << group_[i].get_lastname() << std::endl;
+            std::cout << "Name: " << i.get_name() << std::endl;
+            std::cout << "Lastname: " << i.get_lastname() << std::endl;
             std::cout << "Group: " << student.get_name_group() << std::endl;
 
-            std::map<std::string, std::vector<uint16_t>> estimations_ = group_[i].get_estimations();
+            std::map<std::string, std::vector<uint16_t>> estimations_ = i.get_estimations();
 
-            for (auto it : estimations_)
+            for (const auto& it : estimations_)
             {
                 std::cout << it.first << "\tEstimations: ";
-                for (auto es : it.second)
+                for (const auto es : it.second)
                 {
                     std::cout  << es << " ";
                 }
@@ -1761,7 +1562,7 @@ private:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-class Arr
+class Arr 
 {
 private:
     T* current_array_;
@@ -1790,7 +1591,7 @@ public:
         {
             return throw std::out_of_range("Bad index");
         }
-        return *current_array_[index];
+        return current_array_[index];
     }
 
     unsigned int get_size() const { return  size_; }
@@ -1840,7 +1641,295 @@ public:
     }
 };
 
+int calculate_decimal_value(const std::string& input_str) {
+    try {
+	    const int result = std::stoi(input_str);
+
+        if (result < INT32_MIN || result > INT32_MAX) {
+            throw std::out_of_range("Going beyond the limits of the allowed int range.");
+        }
+
+        return result;
+    }
+    catch (const std::out_of_range& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        throw;
+    }
+}
+
+namespace WorkingWithNumbers
+{
+    class Fraction
+    {
+    public:
+        Fraction(int numerator, int denominator) : numerator(numerator), denominator(denominator) {}
+
+        Fraction operator+(const Fraction& other) const
+        {
+            return Fraction(numerator * other.denominator + other.numerator * denominator, denominator * other.denominator);
+        }
+
+        Fraction operator-(const Fraction& other) const
+        {
+            return Fraction(numerator * other.denominator - other.numerator * denominator, denominator * other.denominator);
+        }
+
+        Fraction operator*(const Fraction& other) const
+        {
+            return Fraction(numerator * other.numerator, denominator * other.denominator);
+        }
+
+        Fraction operator/(const Fraction& other) const
+        {
+            return Fraction(numerator * other.denominator, denominator * other.numerator);
+        }
+
+        void print_result() const
+        {
+            std::cout << numerator << "/" << denominator << std::endl;
+        }
+
+    private:
+        int numerator;
+        int denominator;
+    };
+
+    template<typename T>
+    class Var
+    {
+    public:
+        Var(const T variable) : variable_(variable) {}
+
+        Var operator +(const Var& other)
+        {
+            if (typeid(other.variable_) != typeid(std::string) && typeid(other.variable_) != typeid(char))
+            {
+                Var result;
+                result.variable_ = variable_ + other.variable_;
+                return result;
+            }
+
+            if (typeid(other.variable_) == typeid(std::string) || typeid(other.variable_) == typeid(char))
+            {
+                Var result;
+                result.variable_ = variable_ + static_cast<int>(other.variable_);
+                return result;
+            }
+        }
+        Var operator +=(const Var& other)
+        {
+            if (typeid(other.variable_) != typeid(std::string) && typeid(other.variable_) != typeid(char))
+            {
+                variable_ += other.variable_;
+                return *this;
+            }
+            if (typeid(other.variable_) == typeid(std::string) || typeid(other.variable_) == typeid(char))
+            {
+                variable_ += static_cast<int>(other.variable_);
+                return *this;
+            }
+        }
+
+        Var operator -(const Var& other)
+        {
+            if (typeid(other.variable_) != typeid(std::string) && typeid(other.variable_) != typeid(char))
+            {
+                Var result;
+                result.variable_ = variable_ - other.variable_;
+                return result;
+            }
+
+            if (typeid(other.variable_) == typeid(std::string) || typeid(other.variable_) == typeid(char))
+            {
+                Var result;
+                result.variable_ = variable_ - static_cast<int>(other.variable_);
+                return result;
+            }
+        }
+        Var operator -=(const Var& other)
+        {
+            if (typeid(other.variable_) != typeid(std::string) && typeid(other.variable_) != typeid(char))
+            {
+                variable_ -= other.variable_;
+                return *this;
+            }
+            if (typeid(other.variable_) == typeid(std::string) || typeid(other.variable_) == typeid(char))
+            {
+                variable_ -= static_cast<int>(other.variable_);
+                return *this;
+            }
+        }
+
+        Var operator *(const Var& other)
+        {
+            if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
+            {
+                Var result;
+                const std::string& str1 = variable_;
+                const std::string& str2 = other.variable_;
+
+                for (char c : str1) {
+                    if (str2.find(c) != std::string::npos) {
+                        result += c;
+                    }
+                }
+
+                return result;
+            }
+            Var result;
+            result.variable_ = variable_ * other.variable_;
+
+            return result;
+        }
+        Var operator *=(const Var& other)
+        {
+            if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
+            {
+                Var result;
+                const std::string& str1 = variable_;
+                const std::string& str2 = other.variable_;
+
+                for (char c : str1) {
+                    if (str2.find(c) != std::string::npos) {
+                        result += c;
+                    }
+                }
+
+                return result;
+            }
+            variable_ *= other.variable_;
+            return *this;
+        }
+
+        Var operator /(const Var& other)
+        {
+            if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
+            {
+                Var result;
+                const std::string& str1 = variable_;
+                const std::string& str2 = other.variable_;
+
+                for (char c : str1) {
+                    if (str2.find(c) == std::string::npos) {
+                        result += c;
+                    }
+                }
+
+                return result;
+            }
+
+            if (other.variable_ != 0)
+            {
+                Var result;
+                result.variable_ = variable_ / other.variable_;
+                return result;
+            }
+            else
+            {
+                throw std::exception("Divide by zero");
+            }
+        }
+        Var operator /=(const Var& other)
+        {
+            if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
+            {
+                Var result;
+                const std::string& str1 = variable_;
+                const std::string& str2 = other.variable_;
+
+                for (char c : str1) {
+                    if (str2.find(c) == std::string::npos) {
+                        result += c;
+                    }
+                }
+
+                return result;
+            }
+
+            if (other.variable_ != 0)
+            {
+                variable_ /= other.variable_;
+                return *this;
+            }
+            else throw std::exception("Divide by zero");
+        }
+
+        bool operator <(const Var& other)
+        {
+            if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
+            {
+                return variable_.length() < other.variable_.length();
+            }
+            else
+            {
+                return variable_ < other.variable_;
+            }
+        }
+        bool operator <=(const Var& other)
+        {
+            if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
+            {
+                return variable_.length() <= other.variable_.length();
+            }
+            else
+            {
+                return variable_ <= other.variable_;
+            }
+        }
+
+        bool operator >(const Var& other)
+        {
+            if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
+            {
+                return variable_.length() > other.variable_.length();
+            }
+            else
+            {
+                return variable_ > other.variable_;
+            }
+        }
+        bool operator >=(const Var& other)
+        {
+            if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
+            {
+                return variable_.length() >= other.variable_.length();
+            }
+            else
+            {
+                return variable_ >= other.variable_;
+            }
+        }
+
+        bool operator ==(const Var& other)
+        {
+            if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
+            {
+                return variable_.length() == other.variable_.length();
+            }
+            else
+            {
+                return variable_ == other.variable_;
+            }
+        }
+
+        bool operator !=(const Var& other)
+        {
+            if (typeid(T) == typeid(std::string) || typeid(T) == typeid(char))
+            {
+                return variable_.length() != other.variable_.length();
+            }
+            else
+            {
+                return variable_ != other.variable_;
+            }
+        }
+
+    private:
+        T variable_;
+    };
+};
+
 int main()
 {
-    
+
 }
