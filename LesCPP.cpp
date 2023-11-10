@@ -137,7 +137,6 @@ public:
     }
 };
 
-
 template<typename T>
 class Queue_
 {
@@ -198,18 +197,6 @@ private:
     T* current_array_;
     unsigned int size_;
 };
-
-
-
-int main()
-{
-    Queue_<int> que;
-    que.push(5);
-    que.push(2);
-    que.print();
-    std::cout << "\n" <<  que.pop();
-    que.print();
-}
 
 template<typename T>
 class Var
@@ -441,86 +428,6 @@ public:
 
 private:
     T variable_;
-};
-
-template<typename T>
-class Arr
-{
-private:
-    T* current_array_;
-    unsigned int size_;
-
-    static T generate_random_number() {
-        std::srand(static_cast<T>(std::time(nullptr)));
-        const T random_number = std::rand() % 100 + 1;
-        return random_number;
-    }
-
-public:
-    explicit Arr(const unsigned int& size) :size_(size)
-    {
-        current_array_ = new T[size_];
-        for (size_t i = 0; i < size; ++i)
-        {
-            current_array_[i] = generate_random_number();
-        }
-    }
-    Arr() = default;
-
-    T get_value(const unsigned int& index) const
-    {
-	    if(index > size_)
-	    {
-            return throw std::out_of_range("Bad index");
-	    }
-        return *current_array_[index];
-    }
-
-    unsigned int get_size() const { return  size_; }
-
-    void push_value(const unsigned int& index,const T& value)
-    {
-	    if(index > size_)
-	    {
-            return throw std::out_of_range("Bad index");
-	    }
-
-        // Надо организовать какую-то проверку указателя массива T и типа value
-
-        T* tmp_array_ = new T[size_ + 1];
-
-        for(size_t i = 0; i< size_; ++i)
-        {
-            if(i == index)
-            {
-                /*
-					* class Foo{
-					* public:
-					*   Foo(const int value) : value(value) {}
-					* };
-					* ***** Конструктора по умолчанию нет!
-					* ***** Если использоловать простое присваиваение *tmp_array_[i] = value;* ,то выпадет исключение т.к будет попытка вызова конструктора по умолчанию, которого нет
-					* ***** Код - *new (&tmp_array_[i]) T(value);*  Вызовет конструктор копирования(будь то неявный(дефолтный), || явный(описанный));
-				*/
-                new (&tmp_array_[i]) T(value);
-                //tmp_array_[i] = value;
-                continue;
-            }
-            tmp_array_[i] = current_array_[i];
-        }
-
-        delete[] current_array_;
-        current_array_ = tmp_array_;
-        ++size_;
-    }
-
-    void print_array() const
-    {
-	    for(auto element : current_array_)
-	    {
-            std::cout << element << " ";
-	    }
-    }
 };
 
 template<typename T>
@@ -1642,6 +1549,7 @@ private:
     }
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class Shape_
 {
@@ -1774,6 +1682,8 @@ private:
     double_t radius_b_;
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 class Studet
 {
 public:
@@ -1794,7 +1704,8 @@ public:
         }else
         {
             std::map<std::string, std::vector<uint16_t>> my_map;
-            std::vector<uint16_t> estimation; estimation.emplace_back(value);
+            std::vector<uint16_t> estimation;
+        	estimation.emplace_back(value);
 
             std::pair<std::string, std::vector<uint16_t>> element_to_insert(object, estimation);
             my_map.insert(element_to_insert);
@@ -1846,3 +1757,90 @@ private:
     std::string name_group_;
     std::vector<Studet> group_;
 };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+class Arr
+{
+private:
+    T* current_array_;
+    unsigned int size_;
+
+    static T generate_random_number() {
+        std::srand(static_cast<T>(std::time(nullptr)));
+        const T random_number = std::rand() % 100 + 1;
+        return random_number;
+    }
+
+public:
+    explicit Arr(const unsigned int& size) :size_(size)
+    {
+        current_array_ = new T[size_];
+        for (size_t i = 0; i < size; ++i)
+        {
+            current_array_[i] = generate_random_number();
+        }
+    }
+    Arr() = default;
+
+    T get_value(const unsigned int& index) const
+    {
+        if (index > size_)
+        {
+            return throw std::out_of_range("Bad index");
+        }
+        return *current_array_[index];
+    }
+
+    unsigned int get_size() const { return  size_; }
+
+    void push_value(const unsigned int& index, const T& value)
+    {
+        if (index > size_)
+        {
+            return throw std::out_of_range("Bad index");
+        }
+
+        // Надо организовать какую-то проверку типа указателя массива T и типа value
+
+        T* tmp_array_ = new T[size_ + 1];
+
+        for (size_t i = 0; i < size_; ++i)
+        {
+            if (i == index)
+            {
+                /*
+                    * class Foo{
+                    * public:
+                    *   Foo(const int value) : value(value) {}
+                    * };
+                    * ***** Конструктора по умолчанию нет!
+                    * ***** Если использоловать простое присваиваение * tmp_array_[i] = value; * ,то выпадет исключение т.к будет попытка вызова конструктора по умолчанию, которого нет
+                    * ***** Код - * new (&tmp_array_[i]) T(value); *  Вызовет конструктор копирования(будь то неявный(дефолтный), || явный(описанный));
+                */
+                new (&tmp_array_[i]) T(value);
+                // tmp_array_[i] = value;
+                continue;
+            }
+            tmp_array_[i] = current_array_[i];
+        }
+
+        delete[] current_array_;
+        current_array_ = tmp_array_;
+        ++size_;
+    }
+
+    void print_array() const
+    {
+        for (auto element : current_array_)
+        {
+            std::cout << element << " ";
+        }
+    }
+};
+
+int main()
+{
+    
+}
