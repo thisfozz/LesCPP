@@ -1929,7 +1929,83 @@ namespace WorkingWithNumbers
     };
 };
 
+
+//struct TreeNode {
+//    int val;
+//    TreeNode *left;
+//    TreeNode *right;
+//    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+//    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+//    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+//};
+ 
+//class Solution {
+//public:
+//    int rangeSumBST(TreeNode* root, int low, int high) {
+//        int result = 0;
+//        if (root != nullptr) {
+//            if (root->val >= low && root->val <= high) {
+//                result += root->val;
+//            }
+//            result += rangeSumBST(root->left, low, high);
+//            result += rangeSumBST(root->right, low, high);
+//        }
+//        return result;
+//    }
+//};
+
+
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+ 
+
+class Solution {
+public:
+    TreeNode* getTargetCopy(TreeNode* original, TreeNode* cloned, TreeNode* target) {
+        if (cloned != nullptr) {
+            if (cloned->val == target->val) {
+                return cloned;
+            }
+
+            TreeNode* leftResult = getTargetCopy(original, cloned->left, target);
+            if (leftResult != nullptr) {
+                return leftResult;
+            }
+            TreeNode* rightResult = getTargetCopy(original, cloned->right, target);
+            return rightResult;
+        }
+        return nullptr;
+    }
+};
+
 int main()
 {
+    TreeNode* original = new TreeNode(10);
+    original->left = new TreeNode(5);
+    original->right = new TreeNode(15);
+    original->left->left = new TreeNode(3);
+    original->left->right = new TreeNode(7);
+    original->right->right = new TreeNode(18);
 
+
+    TreeNode* cloned = new TreeNode(10);
+    cloned->left = new TreeNode(5);
+    cloned->right = new TreeNode(15);
+    cloned->left->left = new TreeNode(3);
+    cloned->left->right = new TreeNode(7);
+    cloned->right->right = new TreeNode(18);
+
+    TreeNode* target = new TreeNode(7);
+
+    Solution sol;
+
+    TreeNode* res;
+
+    res = sol.getTargetCopy(original, cloned, target);
+
+    std::cout << res << std::endl;
 }
