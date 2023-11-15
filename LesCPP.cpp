@@ -7,6 +7,8 @@
 #include <cmath>
 #include <map>
 #include <variant>
+#include <random>
+#include <algorithm>
 
 class Array {
 private:
@@ -1641,6 +1643,8 @@ public:
     }
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 int calculate_decimal_value(const std::string& input_str) {
     try {
 	    const int result = std::stoi(input_str);
@@ -1656,6 +1660,8 @@ int calculate_decimal_value(const std::string& input_str) {
         throw;
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace WorkingWithNumbers
 {
@@ -1929,83 +1935,218 @@ namespace WorkingWithNumbers
     };
 };
 
-
-//struct TreeNode {
-//    int val;
-//    TreeNode *left;
-//    TreeNode *right;
-//    TreeNode() : val(0), left(nullptr), right(nullptr) {}
-//    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
-//    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
-//};
- 
-//class Solution {
-//public:
-//    int rangeSumBST(TreeNode* root, int low, int high) {
-//        int result = 0;
-//        if (root != nullptr) {
-//            if (root->val >= low && root->val <= high) {
-//                result += root->val;
-//            }
-//            result += rangeSumBST(root->left, low, high);
-//            result += rangeSumBST(root->right, low, high);
-//        }
-//        return result;
-//    }
-//};
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 struct TreeNode {
     int val;
     TreeNode *left;
     TreeNode *right;
-    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
 };
- 
-
 class Solution {
 public:
-    TreeNode* getTargetCopy(TreeNode* original, TreeNode* cloned, TreeNode* target) {
+    int rangeSumBST(TreeNode* root, int low, int high) {
+        int result = 0;
+        if (root != nullptr) {
+            if (root->val >= low && root->val <= high) {
+                result += root->val;
+            }
+            result += rangeSumBST(root->left, low, high);
+            result += rangeSumBST(root->right, low, high);
+        }
+        return result;
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct TreeNode2 {
+    int val;
+    TreeNode2*left;
+    TreeNode2*right;
+    TreeNode2(int x) : val(x), left(NULL), right(NULL) {}
+};
+class Solution2 {
+public:
+    TreeNode2* getTargetCopy(TreeNode2* original, TreeNode2* cloned, TreeNode2* target) {
         if (cloned != nullptr) {
             if (cloned->val == target->val) {
                 return cloned;
             }
 
-            TreeNode* leftResult = getTargetCopy(original, cloned->left, target);
+            TreeNode2* leftResult = getTargetCopy(original, cloned->left, target);
             if (leftResult != nullptr) {
                 return leftResult;
             }
-            TreeNode* rightResult = getTargetCopy(original, cloned->right, target);
+            TreeNode2* rightResult = getTargetCopy(original, cloned->right, target);
             return rightResult;
         }
         return nullptr;
     }
 };
 
-int main()
-{
-    TreeNode* original = new TreeNode(10);
-    original->left = new TreeNode(5);
-    original->right = new TreeNode(15);
-    original->left->left = new TreeNode(3);
-    original->left->right = new TreeNode(7);
-    original->right->right = new TreeNode(18);
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class Card {
+public:
+    Card(const std::string& value, const std::string& suit) : value_(value), suit_(suit) {}
+
+    std::string get_card() const { return value_ + suit_; }
+private:
+    std::string value_;
+    std::string suit_;
+};
+class Combination {
+public:
+    Combination() {
+        std::vector<std::string> values = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" };
+        std::vector<std::string> suits = { "sp", "he", "di", "cl" };
+        std::vector<std::string> straight_values = { "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
+        std::vector<std::string> reverse_values(straight_values.rbegin(), straight_values.rend());
+
+        combinations_["Royal Flush sp"] = { {"10", suits[0]}, {"J", suits[0]}, {"Q", suits[0]}, {"K", suits[0]}, {"A", suits[0]} };
+        combinations_["Royal Flush he"] = { {"10", suits[1]}, {"J", suits[1]}, {"Q", suits[1]}, {"K", suits[1]}, {"A", suits[1]} };
+        combinations_["Royal Flush di"] = { {"10", suits[2]}, {"J", suits[2]}, {"Q", suits[2]}, {"K", suits[2]}, {"A", suits[2]} };
+        combinations_["Royal Flush cl"] = { {"10", suits[3]}, {"J", suits[3]}, {"Q", suits[3]}, {"K", suits[3]}, {"A", suits[3]} };
+
+        combinations_["Straight Flush"] = generate_combinations(straight_values, suits, 5);
+        combinations_["Four of a Kind"] = generate_combinations(values, suits, 4);
+        combinations_["Full House"] = generate_combinations(values, suits, 3, 2);
+        combinations_["Flush"] = generate_combinations(values, suits, 5);
+        combinations_["Straight"] = generate_combinations(straight_values, suits, 5);
+        combinations_["Three of a Kind"] = generate_combinations(values, suits, 3);
+        combinations_["Two Pair"] = generate_combinations(values, suits, 2, 2);
+        combinations_["One Pair"] = generate_combinations(values, suits, 2);
+        combinations_["High Card"] = generate_combinations(reverse_values, suits, 1);
 
 
-    TreeNode* cloned = new TreeNode(10);
-    cloned->left = new TreeNode(5);
-    cloned->right = new TreeNode(15);
-    cloned->left->left = new TreeNode(3);
-    cloned->left->right = new TreeNode(7);
-    cloned->right->right = new TreeNode(18);
+    }
 
-    TreeNode* target = new TreeNode(7);
+    bool check_combination(const std::vector<Card>& cards) {
+        std::string combination;
+        for (const auto& card : cards) {
+            combination += card.get_card();
+        }
 
-    Solution sol;
+        return combinations_.count(combination) > 0;
+    }
+protected:
+    std::map<std::string, std::vector<std::pair<std::string, std::string>>> combinations_;
 
-    TreeNode* res;
+    std::vector<std::pair<std::string, std::string>> generate_combinations
+    (
+        const std::vector<std::string>& values,
+        const std::vector<std::string>& suits,
+        int count_values,
+        int count_suits = 1
+    ) 
+    {
 
-    res = sol.getTargetCopy(original, cloned, target);
+        std::vector<std::pair<std::string, std::string>> generated_combinations;
+        for (const auto& value : values) {
+            for (const auto& suit : suits) {
+                generated_combinations.push_back({ value, suit });
+            }
+        }
+        generated_combinations.resize(count_values * count_suits);
+        return generated_combinations;
+    }
+};
+class Deck {
+public:
+    Deck() {
+        std::vector<std::string> suits = { "sp", "he", "di", "cl" };
+        std::vector<std::string> values = { "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
 
-    std::cout << res << std::endl;
+        for (const auto& suit : suits) {
+            for (const auto& value : values) {
+                std::string card = value + suit;
+                deck_.push_back({ value, suit });
+            }
+        }
+    }
+
+    std::vector<std::pair<std::string, std::string>>& get_deck_() {
+        return deck_;
+    }
+
+protected:
+    std::vector<std::pair<std::string, std::string>> deck_;
+};
+class Dealer {
+public:
+
+    Dealer() = default;
+
+    Dealer(Deck& deck) : deck_(deck) {
+        shuffleDeck();
+    }
+
+    std::pair<std::string, std::string> dealCardToPlayer() {
+        if (!deck_.get_deck_().empty()) {
+            auto card = deck_.get_deck_().back();
+            deck_.get_deck_().pop_back();
+            return card;
+        }
+
+        return {};
+    }
+
+protected:
+    Deck& deck_;
+
+    void shuffleDeck() {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+
+        std::shuffle(deck_.get_deck_().begin(), deck_.get_deck_().end(), gen);
+    }
+};
+
+class Player {
+public:
+    Player(const std::string name) : name_(name)
+    {
+        arm.emplace_back(dealer.dealCardToPlayer());
+        arm.emplace_back(dealer.dealCardToPlayer());
+        arm.emplace_back(dealer.dealCardToPlayer());
+        arm_card_ = 3;
+    }
+
+    void printArmCard() const {
+        for (auto card : arm) {
+            std::cout << card.first << card.second << ", ";
+        }
+    }
+
+    void take_card() {
+        if (arm_card_ <= limit_card) {
+            return;
+        }
+        arm.emplace_back(dealer.dealCardToPlayer());
+        ++arm_card_;
+    }
+private:
+    std::string name_;
+    std::vector<std::pair<std::string, std::string>> arm;
+    Dealer dealer;
+    uint16_t arm_card_;
+    const uint16_t limit_card = 5;
+};
+
+class Game {
+public:
+
+private:
+    Deck deck_;
+    Combination combination_;
+    Dealer dealer_;
+    Player player_;
+};
+
+int main() {
+
+    return 0;
 }
